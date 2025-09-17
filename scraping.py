@@ -6,7 +6,7 @@ import time
 
 # --- Konfigurasi ---
 OUTPUT_FILE = 'real_data.csv'
-TOTAL_ARTICLES_TO_SCRAPE = 800  # Target judul berita dari MASING-MASING situs
+TOTAL_ARTICLES_TO_SCRAPE = 100  # Target judul berita dari MASING-MASING situs
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 }

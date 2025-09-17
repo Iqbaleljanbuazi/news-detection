@@ -7,7 +7,7 @@ import random
 
 # --- Konfigurasi ---
 OUTPUT_FILE = 'hoax_data.csv'
-MAX_ARTICLES = 508
+MAX_ARTICLES = 200
 BASE_URL = "https://turnbackhoax.id/page/"
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
