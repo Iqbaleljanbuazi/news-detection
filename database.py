@@ -2,9 +2,9 @@ import mysql.connector
 
 # Konfigurasi Database MySQL
 db_config = {
-    'host': 'mysql.railway.internal',
+    'host': 'hopper.proxy.rlwy.net',
     'user': 'root',
-    'password': 'gNGAYynyBIbWHvDrncmQIVnuhGBscwTf',
+    'password': 'qKaGVTELvdtlgvrUUGEsIueROwVXWHGG',
     'database': 'railway'
 }
 
@@ -16,3 +16,4 @@ def get_db_connection():
     except mysql.connector.Error as err:
         print(f"Error saat koneksi ke MySQL: {err}")
         return None
+    
