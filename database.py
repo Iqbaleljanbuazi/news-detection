@@ -2,7 +2,7 @@ import mysql.connector
 
 # Konfigurasi Database MySQL
 db_config = {
-    'host': 'hopper.proxy.rlwy.net',
+    'host': 'mysql.railway.internal',
     'user': 'root',
     'password': 'qKaGVTELvdtlgvrUUGEsIueROwVXWHGG',
     'database': 'railway'
