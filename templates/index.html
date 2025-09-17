@@ -1,75 +1,86 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detektor Berita Hoaks</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <style>
-            html, body, input, textarea, button, select {
-                font-family: 'Poppins', 'Inter', 'Roboto', Arial, sans-serif !important;
-                font-smooth: always;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                letter-spacing: 0.01em;
-            }
-            h1, h2, h3, h4, h5, h6 {
-                font-family: 'Poppins', 'Inter', 'Roboto', Arial, sans-serif !important;
-                font-weight: 700;
-                letter-spacing: 0.01em;
-            }
-            .main-card, .main-card * {
-                font-family: 'Poppins', 'Inter', 'Roboto', Arial, sans-serif !important;
-            }
-            ::selection {
-                background: #a5b4fc;
-                color: #1e293b;
-            }
-            /* Menyesuaikan posisi dan z-index untuk menu mobile */
-            #mobile-menu {
-                position: absolute;
-                top: 100%; /* Agar muncul di bawah navbar */
-                left: 0;
-                width: 100%;
-                background-color: rgba(255, 255, 255, 0.9); /* Latar belakang semi-transparan */
-                backdrop-filter: blur(10px);
-                border-bottom-left-radius: 0.75rem; /* rounded-xl */
-                border-bottom-right-radius: 0.75rem; /* rounded-xl */
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-                z-index: 50; /* Pastikan lebih tinggi dari card konten */
-            }
-            #mobile-menu a {
-                color: #1f2937; /* Darker text for better contrast on light background */
-                padding: 0.75rem 1rem;
-                display: block;
-                font-size: 1rem;
-                font-weight: 500;
-            }
-            #mobile-menu a:hover {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-        </style>
-</head>
-<body class="min-h-screen">
-    <div id="bg-news" style="position:fixed;z-index:0;left:0;top:0;width:100vw;height:100vh;overflow:hidden;">
-        <img src="{{ url_for('static', filename='css/news.jpg') }}" alt="news background" style="width:100vw;height:100vh;object-fit:cover;filter:brightness(0.5) blur(1px);">
-        <div style="position:absolute;left:0;top:0;width:100vw;height:100vh;background:linear-gradient(120deg,rgba(44,83,100,0.5),rgba(20,30,48,0.5));"></div>
-    </div>
+    <title>AI Hoax Detector - Analisis Berita Akurat</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/scrollreveal"></script>
 
-    <nav class="bg-white bg-opacity-20 backdrop-blur-lg fixed top-0 left-0 right-0 z-20 border-b border-white border-opacity-20"> <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
+    <style>
+        /* Mengaplikasikan font Poppins sebagai default */
+        body {
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Animasi gradien untuk background */
+        .animated-gradient {
+            background: linear-gradient(-45deg, #0f172a, #1e3a8a, #312e81, #0c4a6e);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Custom class untuk efek glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Style untuk loader pada tombol */
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Transisi untuk gauge chart */
+        #gauge-fill {
+            transition: stroke-dashoffset 1s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white animated-gradient">
+
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-card">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
                 <div class="flex-shrink-0">
-                    <a href="/" class="text-white font-bold text-xl">AI Detector</a>
+                    <a href="#home" class="text-2xl font-bold tracking-wider">Detector AI</a>
                 </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="{{ url_for('home') }}" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium transition duration-200">Beranda</a>
-                    <a href="{{ url_for('about') }}" class="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Tentang</a>
-                    <a href="{{ url_for('public_history') }}" class="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Riwayat Prediksi</a>
-                    <a href="{{ url_for('login') }}" class="text-gray-200 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Admin Login</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-300 hover:text-white transition duration-300 font-medium">Beranda</a>
+                    <a href="#features" class="text-gray-300 hover:text-white transition duration-300 font-medium">Fitur</a>
+                    <a href="#about" class="text-gray-300 hover:text-white transition duration-300 font-medium">Tentang</a>
+                    <a href="{{ url_for('public_history') }}" class="text-gray-300 hover:text-white transition duration-300 font-medium">Riwayat</a>
+                </div>
+                <div class="hidden md:block">
+                     <a href="{{ url_for('login') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-semibold transition duration-300">Admin Login</a>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="text-white focus:outline-none">
@@ -80,80 +91,135 @@
                 </div>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{{ url_for('home') }}" class="block px-3 py-2 rounded-md text-base font-medium bg-blue-600 text-white">Beranda</a>
-                <a href="{{ url_for('about') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:bg-gray-200">Tentang</a>
-                <a href="{{ url_for('public_history') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:bg-gray-200">Riwayat Prediksi</a>
-                <a href="{{ url_for('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:bg-gray-200">Admin Login</a>
+        <div id="mobile-menu" class="hidden md:hidden glass-card">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-white">Beranda</a>
+                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Fitur</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Tentang</a>
+                <a href="{{ url_for('public_history') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white">Riwayat</a>
+                <a href="{{ url_for('login') }}" class="block w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-semibold transition duration-300">Admin Login</a>
             </div>
         </div>
     </nav>
     
-    <main class="flex items-center justify-center w-full min-h-screen pt-20 p-4">
-        <div class="main-card w-full max-w-4xl mx-auto rounded-3xl p-0 shadow-2xl border border-white/20 bg-white/30 backdrop-blur-lg transition-all duration-300" style="position:relative;z-index:10;">
-            <div class="grid md:grid-cols-2 gap-0">
-                <div class="flex flex-col justify-center items-center p-8 md:p-12">
-                    <div class="w-full text-center mb-8">
-                        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 drop-shadow-lg tracking-tight mb-2">AI Hoax Detector</h1>
-                        <p class="text-gray-700 text-lg font-medium mb-2">Sumber Berita :</p>
-                        <p class="text-gray-700 text-lg font-medium mb-2">www.cnnindonesia.com<br>kompas.com<br>turnbackhoax.id</p>
-                    </div>
-                    <form id="news-form" class="w-full flex flex-col gap-4">
-                        <textarea id="news-text" name="news_text" rows="10" class="w-full p-4 border-2 border-blue-200 bg-white/60 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-200 text-gray-800 placeholder-gray-500 shadow-inner resize-none text-base" placeholder="Salin dan tempel seluruh isi berita di sini..."></textarea>
-                        <button type="submit" id="detect-button" class="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-3 px-4 rounded-xl focus:outline-none flex items-center justify-center gap-2 shadow-lg transition-all duration-200 text-lg">
-                            <svg id="button-icon" class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                            <span id="button-text">Analisis Teks</span>
-                        </button>
-                    </form>
-                </div>
-                <div id="result-column" class="flex items-center justify-center bg-white/20 rounded-r-3xl p-8 md:p-12 min-h-[420px]">
-                    <div class="w-full">
-                        <div id="initial-state" class="text-center text-gray-500 flex flex-col items-center justify-center">
-                            <svg class="w-24 h-24 mx-auto text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <p class="mt-4 text-lg font-semibold">Hasil analisis akan muncul di sini.</p>
+    <main>
+        <section id="home" class="min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
+            <div class="w-full max-w-6xl mx-auto rounded-3xl p-1 shadow-2xl bg-gradient-to-br from-indigo-500/50 to-blue-500/20 reveal-up">
+                <div class="glass-card rounded-3xl">
+                    <div class="grid md:grid-cols-2 gap-0">
+                        <div class="flex flex-col justify-center p-8 md:p-12">
+                            <div class="w-full text-center md:text-left mb-8">
+                                <h1 class="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg tracking-tight mb-3">Deteksi Berita Hoaks</h1>
+                                <p class="text-gray-300 text-lg font-light mb-4">Analisis kebenaran berita dengan teknologi AI. Cukup salin dan tempel teks berita untuk memulai.</p>
+                                <p class="text-sm text-gray-400">Sumber data: CNN Indonesia, Kompas, Turnbackhoax.</p>
+                            </div>
+                            <form id="news-form" class="w-full flex flex-col gap-4">
+                                <textarea id="news-text" name="news_text" rows="8" class="w-full p-4 border border-white/20 bg-slate-800/50 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-200 text-gray-200 placeholder-gray-400 shadow-inner resize-none text-base" placeholder="Salin dan tempel seluruh isi berita di sini..."></textarea>
+                                <button type="submit" id="detect-button" class="bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl focus:outline-none flex items-center justify-center gap-2 shadow-lg transition-all duration-300 text-lg transform hover:scale-105">
+                                    <span id="button-icon-wrapper">
+                                        <svg id="button-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                    </span>
+                                    <span id="button-text">Analisis Teks</span>
+                                </button>
+                            </form>
                         </div>
-                        <div id="result-container" class="w-full text-center" style="display: none;">
-                            <div class="p-6 rounded-2xl bg-white/70 shadow-xl border border-blue-100 flex flex-col items-center">
-                                <h2 class="text-xl font-bold text-gray-800 mb-4">Hasil Analisis</h2>
-                                <div class="relative w-40 h-40 mx-auto mb-4">
-                                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                                        <circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
-                                        <circle id="gauge-fill" class="gauge-fill" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" style="stroke-dasharray: 314; stroke-dashoffset: 314; transform: rotate(-90deg); transform-origin: 50% 50%;" />
-                                    </svg>
-                                    <div id="confidence-percent" class="absolute top-0 left-0 w-full h-full flex items-center justify-center text-4xl font-extrabold text-blue-700 drop-shadow-lg"></div>
+                        
+                        <div id="result-column" class="flex items-center justify-center glass-card md:rounded-r-3xl p-8 md:p-12 min-h-[420px] md:border-l border-white/20">
+                            <div class="w-full">
+                                <div id="initial-state" class="text-center text-gray-400 flex flex-col items-center justify-center transition-opacity duration-500">
+                                    <svg class="w-24 h-24 mx-auto text-indigo-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <p class="mt-4 text-lg font-semibold text-gray-300">Hasil analisis akan muncul di sini.</p>
                                 </div>
-                                <p id="result-text" class="text-3xl font-bold mb-1"></p>
-                                <p class="text-gray-600">Tingkat Keyakinan</p>
+                                
+                                <div id="result-container" class="w-full text-center" style="display: none;">
+                                    <div class="p-6 rounded-2xl flex flex-col items-center">
+                                        <h2 class="text-xl font-bold text-white mb-4">Hasil Analisis</h2>
+                                        <div class="relative w-40 h-40 mx-auto mb-4">
+                                            <svg class="w-full h-full" viewBox="0 0 100 100">
+                                                <circle class="text-slate-700" stroke-width="10" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                                                <circle id="gauge-fill" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" style="stroke-dasharray: 251.2; stroke-dashoffset: 251.2; transform: rotate(-90deg); transform-origin: 50% 50%;" />
+                                            </svg>
+                                            <div id="confidence-percent" class="absolute top-0 left-0 w-full h-full flex items-center justify-center text-4xl font-extrabold drop-shadow-lg"></div>
+                                        </div>
+                                        <p id="result-text" class="text-3xl font-bold mb-1"></p>
+                                        <p class="text-gray-400">Tingkat Keyakinan</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section id="features" class="py-20 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12 reveal-up">
+                    <h2 class="text-4xl font-extrabold tracking-tight">Kenapa Menggunakan Detector AI?</h2>
+                    <p class="mt-4 text-lg text-gray-300">Alat canggih untuk membantu Anda memilah informasi di era digital.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-card p-8 rounded-2xl text-center reveal-up" data-sr-delay="100">
+                        <div class="bg-indigo-500/20 text-indigo-300 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Akurasi Tinggi</h3>
+                        <p class="text-gray-400">Ditenagai oleh model AI yang dilatih dengan ribuan data berita untuk memberikan hasil yang akurat.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-2xl text-center reveal-up" data-sr-delay="200">
+                        <div class="bg-indigo-500/20 text-indigo-300 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Cepat & Efisien</h3>
+                        <p class="text-gray-400">Dapatkan hasil analisis dalam hitungan detik. Hemat waktu Anda dalam memverifikasi informasi.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-2xl text-center reveal-up" data-sr-delay="300">
+                        <div class="bg-indigo-500/20 text-indigo-300 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Sumber Terpercaya</h3>
+                        <p class="text-gray-400">Model kami dilatih menggunakan dataset dari sumber-sumber berita terverifikasi di Indonesia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-20 px-4 bg-slate-900/30">
+            <div class="max-w-4xl mx-auto text-center reveal-up">
+                 <h2 class="text-4xl font-extrabold tracking-tight">Tentang Proyek Ini</h2>
+                 <p class="mt-6 text-lg text-gray-300 leading-relaxed">
+                    AI Hoax Detector adalah sebuah inisiatif untuk memerangi misinformasi dan disinformasi yang merajalela. Dengan memanfaatkan kekuatan *machine learning*, kami bertujuan untuk menyediakan alat yang mudah diakses bagi siapa saja untuk memverifikasi keaslian sebuah berita. Kami percaya bahwa literasi digital yang kuat adalah kunci untuk masyarakat yang lebih cerdas dan kritis.
+                 </p>
+            </div>
+        </section>
+
     </main>
     
+    <footer class="bg-slate-900/50 border-t border-white/10 mt-20">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <p>&copy; 2025 AI Hoax Detector. Dibuat untuk masyarakat informasi yang lebih baik.</p>
+        </div>
+    </footer>
+
     <script>
-        // Script untuk toggle menu mobile
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Script untuk form prediksi
+        // ===============================================
+        // SCRIPT FUNGSIONALITAS DETEKTOR (TIDAK DIUBAH)
+        // ===============================================
         const newsForm = document.getElementById('news-form');
         const newsText = document.getElementById('news-text');
         const detectButton = document.getElementById('detect-button');
         const buttonText = document.getElementById('button-text');
-        const buttonIcon = document.getElementById('button-icon');
+        const buttonIconWrapper = document.getElementById('button-icon-wrapper');
         const resultColumn = document.getElementById('result-column');
         const initialState = document.getElementById('initial-state');
         const resultContainer = document.getElementById('result-container');
         const resultText = document.getElementById('result-text');
         const gaugeFill = document.getElementById('gauge-fill');
         const confidencePercent = document.getElementById('confidence-percent');
+
+        // Simpan SVG ikon asli
+        const originalIcon = buttonIconWrapper.innerHTML;
+
         newsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = newsText.value.trim();
@@ -161,11 +227,13 @@
                 alert('Teks berita terlalu pendek. Mohon masukkan teks yang lebih panjang.');
                 return;
             }
+            // Update UI saat loading
             buttonText.textContent = 'Menganalisis...';
-            buttonIcon.innerHTML = `<div class="loader"></div>`;
+            buttonIconWrapper.innerHTML = `<div class="loader"></div>`;
             detectButton.disabled = true;
-            initialState.style.display = 'none';
-            resultContainer.style.display = 'none';
+            
+            initialState.style.opacity = '0'; // Mulai fade out
+            
             try {
                 const response = await fetch('/predict', {
                     method: 'POST',
@@ -176,43 +244,85 @@
                 if (!response.ok) {
                     throw new Error(data.error || 'Gagal terhubung ke server.');
                 }
-                displayResult(data);
+                
+                // Tunggu transisi opacity selesai sebelum menampilkan hasil
+                setTimeout(() => {
+                    displayResult(data);
+                }, 500);
+
             } catch (error) {
                 console.error('Error:', error);
-                displayResult({ prediction: 'ERROR', full_text: error.message, confidence: '0' });
+                 setTimeout(() => {
+                    displayResult({ prediction: 'ERROR', full_text: 'Terjadi Kesalahan', confidence: '0' });
+                }, 500);
             } finally {
+                // Kembalikan tombol ke state normal
                 buttonText.textContent = 'Analisis Teks';
-                buttonIcon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>`;
+                buttonIconWrapper.innerHTML = originalIcon;
                 detectButton.disabled = false;
             }
         });
+
         function displayResult(data) {
-            resultContainer.style.display = 'block';
-            initialState.style.display = 'none';
+            initialState.style.display = 'none'; // Sembunyikan state awal
+            resultContainer.style.display = 'block'; // Tampilkan kontainer hasil
+
             const confidence = parseFloat(data.confidence) || 0;
-            const circumference = 2 * Math.PI * 40;
+            const circumference = 2 * Math.PI * 40; // 2 * pi * radius (251.2)
             const offset = circumference - (confidence / 100) * circumference;
+            
             gaugeFill.style.strokeDashoffset = offset;
+            
+            // Reset classes
             gaugeFill.classList.remove('text-green-500', 'text-red-500', 'text-gray-400');
-            confidencePercent.classList.remove('text-green-600', 'text-red-600', 'text-gray-500');
-            resultText.classList.remove('text-green-600', 'text-red-600', 'text-gray-500');
+            confidencePercent.classList.remove('text-green-400', 'text-red-400', 'text-gray-400');
+            resultText.classList.remove('text-green-400', 'text-red-400', 'text-gray-400');
+            
             confidencePercent.textContent = `${confidence.toFixed(0)}%`;
             resultText.textContent = data.full_text;
+
             if (data.prediction === 'REAL') {
                 gaugeFill.classList.add('text-green-500');
-                confidencePercent.classList.add('text-green-600');
-                resultText.classList.add('text-green-600');
+                confidencePercent.classList.add('text-green-400');
+                resultText.classList.add('text-green-400');
             } else if (data.prediction === 'FAKE') {
                 gaugeFill.classList.add('text-red-500');
-                confidencePercent.classList.add('text-red-600');
-                resultText.classList.add('text-red-600');
-            } else {
+                confidencePercent.classList.add('text-red-400');
+                resultText.classList.add('text-red-400');
+            } else { // Handle Error
                 gaugeFill.classList.add('text-gray-400');
-                confidencePercent.classList.add('text-gray-500');
-                resultText.classList.add('text-gray-500');
+                confidencePercent.classList.add('text-gray-400');
+                resultText.classList.add('text-gray-400');
                 confidencePercent.textContent = `!`;
             }
         }
+        
+        // ===============================================
+        // SCRIPT BARU UNTUK UI & ANIMASI
+        // ===============================================
+        
+        // --- Script untuk toggle menu mobile ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // --- Script untuk ScrollReveal ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sr = ScrollReveal({
+                origin: 'bottom',
+                distance: '30px',
+                duration: 800,
+                delay: 200,
+                easing: 'cubic-bezier(0.5, 0, 0, 1)',
+                reset: false
+            });
+
+            sr.reveal('.reveal-up');
+        });
+
     </script>
 </body>
 </html>
